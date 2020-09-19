@@ -1,2 +1,2 @@
-# open-trading-boot
-Generic module that defines interfaces for broker specific modules to extend and implement
+# open-trading-core
+Core module that defines Open Trading Platform spec for brokers
