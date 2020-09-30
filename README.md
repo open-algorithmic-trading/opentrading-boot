@@ -1,2 +1,2 @@
 # opentrading-core
-Core module that defines Open Trading Platform spec for brokers
+Core module that defines openTrading platform spec for brokers
