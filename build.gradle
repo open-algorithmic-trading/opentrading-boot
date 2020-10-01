@@ -1,8 +1,10 @@
 plugins {
-    id 'org.springframework.boot' version '2.3.4.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-    id 'java'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    // https://guides.gradle.org/building-java-libraries/
+    id 'java-library'
 }
+
+apply plugin: 'io.spring.dependency-management'
 
 group = 'dev.opentrading'
 version = '0.0.1-SNAPSHOT'
@@ -20,6 +22,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    // maven: provided
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -27,14 +30,17 @@ dependencies {
     }
 }
 
+// enable JUnit Platform (a.k.a. JUnit 5) support
 test {
     useJUnitPlatform()
 }
 
+// avoid executable jar
 bootJar {
-    false
+    enabled = false
 }
 
+// build archive jar
 jar {
-    true
+    enabled = true
 }
