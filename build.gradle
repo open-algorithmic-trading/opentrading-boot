@@ -21,10 +21,16 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation('org.springframework.boot:spring-boot-starter') {
+        // https://docs.spring.io/spring-boot/docs/2.3.4.RELEASE/reference/html/appendix-configuration-metadata.html#configuration-metadata-annotation-processor
+        exclude group: 'org.springframework.boot', module: 'spring-boot-configuration-processor'
+    }
     // maven: provided
     compileOnly 'org.projectlombok:lombok'
+
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
