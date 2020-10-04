@@ -28,6 +28,8 @@ dependencies {
     // maven: provided
     compileOnly 'org.projectlombok:lombok'
 
+    implementation 'javax.inject:javax.inject:1'
+
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
