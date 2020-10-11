@@ -8,10 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(CoreApplicationProperties.class)
 public class CoreApplicationConfiguration {
-
     @Bean
     public ExitCodeGenerator exitCodeGenerator() {
         return () -> -1;
     }
-
 }

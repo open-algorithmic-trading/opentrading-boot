@@ -10,7 +10,6 @@ import javax.annotation.PreDestroy;
 @Slf4j
 @SpringBootApplication
 public class CoreApplication {
-
     public static void main(String[] args) {
         System.exit(SpringApplication.exit(SpringApplication.run(CoreApplication.class, args)));
         log.info("Started OpenTrading application!");
@@ -20,5 +19,4 @@ public class CoreApplication {
     public void destroy() {
         log.info("Executing destroy()");
     }
-
 }

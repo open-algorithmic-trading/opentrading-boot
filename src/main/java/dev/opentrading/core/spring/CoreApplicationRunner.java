@@ -15,7 +15,6 @@ import javax.inject.Named;
 @Named
 @Order(1)
 public abstract class CoreApplicationRunner implements ApplicationRunner {
-
     private final CoreApplicationProperties applicationProperties;
 
     private final CoreBootstrap coreBootstrap;
@@ -28,33 +27,34 @@ public abstract class CoreApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         log.info("CoreApplicationRunner(1) starting...");
-        if (coreBootstrap.login()) {
+        coreBootstrap.login().thenAccept(loggedId -> {
             log.info("Logged in");
-            if (coreBootstrap.getMargin()) {
+
+            coreBootstrap.getMargin().thenAccept(margin -> {
                 log.info("Retrieved margin");
-                if (coreBootstrap.getAllInstruments()) {
+
+                coreBootstrap.getAllInstruments().thenAccept(instruments -> {
                     log.info("Loaded all instruments");
-                    if (coreBootstrap.getTradingInstruments()) {
+
+                    coreBootstrap.getTradingInstruments().thenAccept(tradingInstrument -> {
                         log.info("Filtered trading instruments");
-                        if (coreBootstrap.initSimulator()) {
 
-                        }
-                        if (coreBootstrap.scheduleTicksReading()) {
-                            log.info("Scheduled ticksReading");
-                            if (coreBootstrap.initWebSocket()) {
-                                log.info("Initialized WebSocket");
-                                if (coreBootstrap.streamTicks()) {
-                                    log.info("Started streaming ticks");
-                                    if (coreBootstrap.scheduleTicksAggregator()) {
-                                        log.info("Scheduled ticks aggregator");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+                        coreBootstrap.initWebSocket().thenAccept(initWebsocket -> {
+                            log.info("Initialized WebSocket");
+
+                            coreBootstrap.streamTicks().thenAccept(ScheduledStreamingTicks -> {
+                                log.info("Started streaming ticks");
+
+                                coreBootstrap.scheduleTicksAggregator().thenAccept(success -> {
+                                    log.info("Scheduled tick aggregator");
+
+                                    log.info("Started CoreApplicationRunner.");
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
     }
-
 }
