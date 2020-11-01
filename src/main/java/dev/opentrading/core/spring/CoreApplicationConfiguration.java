@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(CoreApplicationProperties.class)
+@EnableConfigurationProperties(CoreProperties.class)
 public class CoreApplicationConfiguration {
     @Bean
     public ExitCodeGenerator exitCodeGenerator() {
