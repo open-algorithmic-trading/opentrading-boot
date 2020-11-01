@@ -7,6 +7,10 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 
 import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * First runner
@@ -15,12 +19,12 @@ import javax.inject.Named;
 @Named
 @Order(1)
 public abstract class CoreApplicationRunner implements ApplicationRunner {
-    private final CoreApplicationProperties applicationProperties;
+    private final CoreProperties coreProperties;
 
     private final CoreBootstrap coreBootstrap;
 
-    protected CoreApplicationRunner(CoreApplicationProperties applicationProperties, CoreBootstrap coreBootstrap) {
-        this.applicationProperties = applicationProperties;
+    protected CoreApplicationRunner(CoreProperties applicationProperties, CoreBootstrap coreBootstrap) {
+        this.coreProperties = applicationProperties;
         this.coreBootstrap = coreBootstrap;
     }
 
@@ -39,18 +43,36 @@ public abstract class CoreApplicationRunner implements ApplicationRunner {
                     coreBootstrap.getTradingInstruments().thenAccept(tradingInstrument -> {
                         log.info("Filtered trading instruments");
 
-                        coreBootstrap.initWebSocket().thenAccept(initWebsocket -> {
+                        coreBootstrap.<Boolean> initWebSocket().thenApply(initialized -> {
                             log.info("Initialized WebSocket");
 
-                            coreBootstrap.streamTicks().thenAccept(ScheduledStreamingTicks -> {
-                                log.info("Started streaming ticks");
-
-                                coreBootstrap.scheduleTicksAggregator().thenAccept(success -> {
-                                    log.info("Scheduled tick aggregator");
-
-                                    log.info("Started CoreApplicationRunner.");
-                                });
-                            });
+                            List<CompletableFuture<Boolean>> completableFutureList = new ArrayList<>();
+                            if (coreProperties.getOptions().isStreamTicks()) {
+                                completableFutureList.add((coreBootstrap.<Boolean> streamTicks()
+                                        .thenApply(scheduled -> {
+                                            log.info("Scheduled streaming ticks");
+                                            return scheduled;
+                                        })));
+                            }
+                            if (coreProperties.getOptions().isStreamTicksAggregator()) {
+                                completableFutureList.add((coreBootstrap.<Boolean> scheduleTicksAggregator()
+                                        .thenApply(scheduled -> {
+                                            log.info("Scheduled ticks aggregator");
+                                            return scheduled;
+                                        })));
+                            }
+                            return initialized && completableFutureList.stream()
+                                    .map(CompletableFuture::join)
+                                    .collect(Collectors.toList())
+                                    .stream()
+                                    .reduce(true, Boolean::logicalAnd);
+                        }).whenComplete((initialized, throwable) -> {
+                            if (throwable != null) {
+                                log.error("Exception occurred. exception={}", throwable.getCause().getMessage());
+                            }
+                            if (initialized) {
+                                log.info("Started CoreApplicationRunner");
+                            }
                         });
                     });
                 });

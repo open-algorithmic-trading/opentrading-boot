@@ -1,1 +1,68 @@
-opentrading:
+#
+# 1. core properties
+#
+opentrading.core:
+  options:
+    streamTicks: false
+    streamTicksAggregator: false
+  marketData:
+    openTime: 09-00
+    closeTime: 15-30
+  tradingData:
+    startTime: 09:30
+    endTime: 15:00
+    instrumentGroups:
+      - a
+      - b
+  orchestrator:
+###
+
+
+#
+# 2. persistence properties
+#
+opentrading.persistence:
+###
+
+
+#
+# 3. data properties
+#
+opentrading.data:
+  tickIntevalMillSeconds: 300000
+###
+
+
+#
+# 4. compute properties
+#
+opentrading.compute:
+###
+
+
+#
+# 5. strategy properties
+#
+opentrading.strategy
+###
+
+
+#
+# 6. analyzer properties
+#
+opentrading.analyzer
+###
+
+
+#
+# 7. agent properties
+#
+opentrading.agent
+###
+
+
+#
+# 8. simulator properties
+#
+opentrading.simulator
+###
